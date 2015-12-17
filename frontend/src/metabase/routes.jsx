@@ -99,6 +99,9 @@ const IsAuthenticated = MetabaseIsSetup(UserIsAuthenticated(({ children }) => ch
 const IsAdmin = MetabaseIsSetup(UserIsAuthenticated(UserIsAdmin(({ children }) => children)));
 const IsNotAuthenticated = MetabaseIsSetup(UserIsNotAuthenticated(({ children }) => children));
 
+import GraphiQL from 'graphiql';
+import "graphiql/graphiql.css"
+
 export const getRoutes = (store) =>
     <Route component={App}>
         {/* SETUP */}
@@ -228,6 +231,17 @@ export const getRoutes = (store) =>
 
                 {getAdminPermissionsRoutes(store)}
             </Route>
+
+            <Route path="/graphiql" component={() =>
+                <GraphiQL fetcher={(graphQLParams) =>
+                    fetch(window.location.origin + '/api/graphql', {
+                        method: 'post',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(graphQLParams),
+                        credentials: 'same-origin',
+                    }).then(response => response.json())
+                } />
+            } />
 
             {/* MISC */}
             <Route path="/unauthorized" component={Unauthorized} />
